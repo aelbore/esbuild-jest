@@ -5,15 +5,11 @@
 ## Install
 
 ```bash
-npm install --save-dev 
+npm install --save-dev esbuild-jest
 ```
-
-## Setup
-
-You have to define `swc-jest` as a transformer for your JavaScript code, map _.js_ files to the `swc-jest` module.
 
 ```json
 "transform": {
-  "^.+\\.jsx?$": "swc-jest"
+  "^.+\\.tsx?$": "esbuild-jest"
 },
 ```
