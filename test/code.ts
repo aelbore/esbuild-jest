@@ -1,0 +1,1 @@
+export const code = `import * as fs from 'fs'`
