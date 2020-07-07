@@ -18,9 +18,7 @@ export default {
     },
     {
       name: 'link',
-      buildEnd: async () => {
-        await symlinkDir('./dist', './node_modules/esbuild-jest')
-      }
+      buildEnd: () => symlinkDir('./dist', './node_modules/esbuild-jest')
     }
   ]
 }

@@ -3,6 +3,12 @@ import { buildSync } from 'esbuild'
 import { builtinModules } from 'module'
 
 const pkg = require(path.resolve('package.json'))
+const external = [ 
+  ...builtinModules, 
+  ...Object.keys(pkg.dependencies ?? {}),
+  ...Object.keys(pkg.devDependencies ?? {}),
+  ...Object.keys(pkg.peerDependencies ?? {})
+]
 
 const build = (filename: string) => {
   const outFiles = buildSync({   
@@ -13,12 +19,7 @@ const build = (filename: string) => {
     write: false,
     target: 'esnext',
     sourcemap: true,
-    external: [ 
-      ...builtinModules, 
-      ...Object.keys(pkg.dependencies ?? {}),
-      ...Object.keys(pkg.devDependencies ?? {}),
-      ...Object.keys(pkg.peerDependencies ?? {})
-    ]
+    external
   })
 
   return outFiles.outputFiles.reduce((cur, item) => {
