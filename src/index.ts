@@ -11,9 +11,9 @@ const external = [
 ]
 
 const build = (filename: string) => {
-  const outFiles = buildSync({   
+  const { outputFiles } = buildSync({   
     entryPoints: [ filename ],
-    outfile: './dist/main.js',
+    outdir: './dist',
     minify: false,
     bundle: true, 
     write: false,
@@ -22,7 +22,7 @@ const build = (filename: string) => {
     external
   })
 
-  return outFiles.outputFiles.reduce((cur, item) => {
+  return outputFiles.reduce((cur, item) => {
     const key = item.path.includes('.map') ? 'map': 'code'
     cur[key] = Buffer.from(item.contents).toString()
     return cur
