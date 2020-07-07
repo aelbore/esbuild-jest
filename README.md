@@ -8,7 +8,7 @@ With this transformer you can use and transform (ts, js, tsx and jsx) files
 ## Install
 
 ```bash
-npm install --save-dev esbuild-jest esbuild
+npm install --save-dev esbuild-jest
 ```
 
 #### Setting up Jest config file
