@@ -1,11 +1,36 @@
-import forceSync from 'sync-rpc'
-import { join, resolve } from 'path'
+import * as path from 'path'
+import { buildSync } from 'esbuild'
+import { builtinModules } from 'module'
 
-const transform = forceSync(join(__dirname, 'esbuild'))
+const pkg = require(path.resolve('package.json'))
+const external = [ 
+  ...builtinModules, 
+  ...Object.keys(pkg.dependencies ?? {}),
+  ...Object.keys(pkg.devDependencies ?? {}),
+  ...Object.keys(pkg.peerDependencies ?? {})
+]
+
+const build = (filename: string) => {
+  const { outputFiles } = buildSync({   
+    entryPoints: [ filename ],
+    outdir: './dist',
+    minify: false,
+    bundle: true, 
+    write: false,
+    target: 'esnext',
+    sourcemap: true,
+    external
+  })
+
+  return outputFiles.reduce((cur, item) => {
+    const key = item.path.includes('.map') ? 'map': 'code'
+    cur[key] = Buffer.from(item.contents).toString()
+    return cur
+  }, {})
+}
 
 export default {
   process (content: string, filename: string) { 
-    const filePath = filename.replace(resolve(), '.')
-    return transform(filePath)
+    return build(filename)
   }  
 }

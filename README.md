@@ -8,7 +8,7 @@ With this transformer you can use and transform (ts, js, tsx and jsx) files
 ## Install
 
 ```bash
-npm install --save-dev esbuild-jest
+npm install --save-dev esbuild-jest esbuild
 ```
 
 #### Setting up Jest config file
@@ -17,8 +17,8 @@ esbuild-jest transformer should be used in your Jest config file like this:
 
 ```js
 {
-    "transform": {
-      "^.+\\.tsx?$": "esbuild-jest"
-    }
+  "transform": {
+    "^.+\\.tsx?$": "esbuild-jest"
+  }
 }
 ```
