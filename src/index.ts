@@ -17,7 +17,7 @@ const build = (filename: string) => {
     minify: false,
     bundle: true, 
     write: false,
-    target: 'esnext',
+    target: 'es2018',
     sourcemap: true,
     external
   })
