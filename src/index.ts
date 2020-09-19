@@ -1,36 +1,25 @@
-import * as path from 'path'
-import { buildSync } from 'esbuild'
-import { builtinModules } from 'module'
+import { buildSync, OutputFile } from 'esbuild'
 
-const pkg = require(path.resolve('package.json'))
-const external = [ 
-  ...builtinModules, 
-  ...Object.keys(pkg.dependencies ?? {}),
-  ...Object.keys(pkg.devDependencies ?? {}),
-  ...Object.keys(pkg.peerDependencies ?? {})
-]
-
-const build = (filename: string) => {
-  const { outputFiles } = buildSync({   
-    entryPoints: [ filename ],
-    outdir: './dist',
-    minify: false,
-    bundle: true, 
+export function process(_content: string, filename: string) {
+  const { outputFiles } = buildSync({
+    entryPoints: [filename],
     write: false,
+    outdir: '/',
+    format: 'cjs',
     target: 'es2018',
-    sourcemap: true,
-    external
+    sourcemap: 'external',
   })
 
-  return outputFiles.reduce((cur, item) => {
-    const key = item.path.includes('.map') ? 'map': 'code'
-    cur[key] = Buffer.from(item.contents).toString()
-    return cur
-  }, {})
+  const code = decodeFile(outputFiles[1])
+  const map = JSON.parse(decodeFile(outputFiles[0]))
+  // Fix source mapping by using the absolute path.
+  map.sources[0] = filename
+  // Save disk space by not caching the content. (Jest doesn't use it anyway.)
+  map.sourcesContent = null
+
+  return { code, map }
 }
 
-export default {
-  process (content: string, filename: string) { 
-    return build(filename)
-  }  
+function decodeFile(file: OutputFile) {
+  return Buffer.from(file.contents).toString()
 }
