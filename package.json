@@ -24,8 +24,8 @@
     "url": "https://github.com/aelbore/esbuild-jest/issues"
   },
   "homepage": "https://github.com/aelbore/esbuild-jest#readme",
-  "dependencies": {
-    "esbuild": "^0.6.28"
+  "peerDependencies": {
+    "esbuild": ">=0.5.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.10",
@@ -33,6 +33,7 @@
     "@types/node": "^14.6.2",
     "aria-build": "^0.5.1",
     "aria-fs": "^0.5.1",
+    "esbuild": "latest",
     "jest": "^26.4.2",
     "mock-fs": "^4.13.0",
     "tslib": "^2.0.1",
