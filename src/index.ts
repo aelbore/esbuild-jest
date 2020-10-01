@@ -1,25 +1,23 @@
-import { buildSync, OutputFile } from 'esbuild'
+import { buildSync } from 'esbuild'
 
 export function process(_content: string, filename: string) {
   const { outputFiles } = buildSync({
-    entryPoints: [filename],
+    entryPoints: [ filename ],
     write: false,
     outdir: '/',
     format: 'cjs',
     target: 'es2018',
-    sourcemap: 'external',
+    sourcemap: 'external'
   })
 
-  const code = decodeFile(outputFiles[1])
-  const map = JSON.parse(decodeFile(outputFiles[0]))
-  // Fix source mapping by using the absolute path.
-  map.sources[0] = filename
-  // Save disk space by not caching the content. (Jest doesn't use it anyway.)
-  map.sourcesContent = null
-
-  return { code, map }
-}
-
-function decodeFile(file: OutputFile) {
-  return Buffer.from(file.contents).toString()
+  return outputFiles.reduce((cur, item) => {
+    const key = item.path.includes('.map') ? 'map': 'code'
+    cur[key] = Buffer.from(item.contents).toString()
+    if (key.includes('map')) {
+      cur[key] = JSON.parse(cur[key])
+      cur[key].sources.splice(0, 1, filename)
+      cur[key].sourcesContent = null
+    }
+    return cur
+  }, {})
 }
