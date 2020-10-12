@@ -1,23 +1,19 @@
-import { buildSync } from 'esbuild'
+import { transformSync } from 'esbuild'
+import path from 'path'
 
-export function process(_content: string, filename: string) {
-  const { outputFiles } = buildSync({
-    entryPoints: [ filename ],
-    write: false,
-    outdir: '/',
+export function process(content: string, filename: string) {
+  const result = transformSync(content, {
+    loader: path.extname(filename).slice(1) as any,
     format: 'cjs',
     target: 'es2018',
-    sourcemap: 'external'
+    sourcemap: true,
+    sourcefile: filename,
   })
-
-  return outputFiles.reduce((cur, item) => {
-    const key = item.path.includes('.map') ? 'map': 'code'
-    cur[key] = Buffer.from(item.contents).toString()
-    if (key.includes('map')) {
-      cur[key] = JSON.parse(cur[key])
-      cur[key].sources.splice(0, 1, filename)
-      cur[key].sourcesContent = null
-    }
-    return cur
-  }, {})
+  return {
+    code: result.js,
+    map: {
+      ...JSON.parse(result.jsSourceMap),
+      sourcesContent: null,
+    },
+  }
 }
