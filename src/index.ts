@@ -25,9 +25,9 @@ export function process(content: string, filename: string) {
   })
 
   return {
-    code: result.js,
+    code: result.code,
     map: {
-      ...JSON.parse(result.jsSourceMap),
+      ...JSON.parse(result.map),
       sourcesContent: null,
     }
   }
