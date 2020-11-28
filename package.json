@@ -1,11 +1,11 @@
 {
   "name": "esbuild-jest",
-  "version": "0.2.3",
+  "version": "0.3.0-beta.1",
   "description": "Jest plugin to use esbuild for transformation",
   "main": "esbuild-jest.js",
   "module": "esbuild-jest.es.js",
   "typings": "esbuild-jest.d.ts",
-  "scripts": {
+    "scripts": {
     "build": "aria-build -d",
     "test": "jest --clearCache && jest"
   },
