@@ -22,3 +22,20 @@ esbuild-jest transformer should be used in your Jest config file like this:
   }
 }
 ```
+
+#### Setting up Jest config file with transformOptions
+[Transform API](https://esbuild.github.io/api/)
+
+```js
+{
+  "transform": {
+    "^.+\\.tsx?$": [ 
+      "esbuild-jest", 
+      { sourcemap: false } 
+    ]
+  }
+}
+```
+
+
+
