@@ -1,28 +1,57 @@
-import { transformSync } from 'esbuild'
-import { extname } from 'path'
+import { Format, Loader, transformSync } from 'esbuild'
+import path, { extname } from 'path'
 
-const getOptions = (filename: string, config: any) => {
+const getExt = (str: string) => {
+  const basename = path.basename(str);
+  const firstDot = basename.indexOf('.');
+  const lastDot = basename.lastIndexOf('.');
+  const extname = path.extname(basename).replace(/(\.[a-z0-9]+).*/i, '$1');
+
+  if (firstDot === lastDot) return extname
+
+  return basename.slice(firstDot, lastDot) + extname;
+}
+
+const getOptions = (config: any) => {
   let options = {}
 
   for (let i = 0; i < config.transform.length; i++) {
-    if (new RegExp(config.transform[i][0]).test(filename)) {
-      options = config.transform[i][2]
-    }
+    options = config.transform[i][2]
   }
 
   return options
 }
 
+export interface Options {
+  jsxFactory?: string
+  jsxFragment?: string
+  sourcemap?: boolean | 'inline' | 'external'
+  loaders?: {
+    [ext: string]: Loader
+  },
+  target?: string
+  format?: string
+}
+
 export function process(content: string, filename: string, config: any) {
-  const options = getOptions(filename, config)
+  const options: Options = getOptions(config)
+
+  const ext = getExt(filename)
+  const loader = options?.loaders && options?.loaders[ext] 
+    ? options.loaders[ext]
+    : extname(filename).slice(1) as Loader
+
+  const sourcemaps = options?.sourcemap 
+    ? { sourcemap: true, sourcefile: filename }
+    : {}
 
   const result = transformSync(content, {
-    loader: extname(filename).slice(1) as any,
-    sourcefile: filename,
-    sourcemap: true,
-    format: 'cjs',
-    target: 'es2018',
-    ...options
+    loader,
+    format: options?.format as Format || 'cjs',
+    target: options?.target || 'es2018',
+    ...(options?.jsxFactory ? { jsxFactory: options.jsxFactory }: {}),
+    ...(options?.jsxFragment ? { jsxFragment: options.jsxFragment }: {}),
+    ...sourcemaps
   })
 
   return {

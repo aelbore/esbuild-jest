@@ -24,14 +24,30 @@ esbuild-jest transformer should be used in your Jest config file like this:
 ```
 
 #### Setting up Jest config file with transformOptions
-[Transform API](https://esbuild.github.io/api/)
+```typescript
+export interface Options {
+  jsxFactory?: string
+  jsxFragment?: string
+  sourcemap?: boolean | 'inline' | 'external'
+  loaders?: {
+    [ext: string]: Loader
+  },
+  target?: string
+  format?: string
+}
+```
 
 ```js
 {
   "transform": {
     "^.+\\.tsx?$": [ 
       "esbuild-jest", 
-      { sourcemap: false } 
+      { 
+        sourcemap: false,
+        loaders: {
+          '.spec.ts': 'tsx'
+        }
+      } 
     ]
   }
 }

@@ -1,5 +1,5 @@
-import mockfs from "mock-fs"
-import { process } from "../src/index"
+import mockfs from "mock-fs";
+import { process } from "../src/index";
 
 afterEach(() => {
   mockfs.restore();
@@ -21,10 +21,10 @@ test("ts file", () => {
   const output = process(content, "./tests/index.spec.ts", {
     transform: [
       [
-        "^.+\\.[ts]?$", 
-        "./dist/esbuild-jest.js"
-      ]
-    ],
+        "^.+\\.ts?$",
+         "./dist/esbuild-jest.js"
+        ]
+      ],
   });
 
   expect(output.code).toMatchInlineSnapshot(`
@@ -86,13 +86,12 @@ test("with transformOptions", () => {
         {
           format: "esm",
           sourcemap: false
-        }
-      ]
+        },
+      ],
     ],
   });
 
-  expect(output.code).toMatchInlineSnapshot(
-    `
+  expect(output.code).toMatchInlineSnapshot(`
     "import names2 from \\"./names\\";
     function display() {
       return names2;
@@ -101,8 +100,72 @@ test("with transformOptions", () => {
       display
     };
     "
-    `
-  );
+    `);
 
-  expect(output.map).toEqual('')
+  expect(output.map).toEqual("");
+});
+
+test("load index.(x)", async () => {
+  const content = `
+  export default class Foo {
+    render() {
+      return <div className="hehe">hello there!!!</div>
+    }
+  }  
+  `;
+
+  const tests = `
+  import React from 'react';
+  import ReactTestUtils from 'react-addons-test-utils';
+  import Foo from '../src/index';
+
+  const Renderer = ReactTestUtils.createRenderer();
+
+  describe('Example1', () => {
+    it('should render correctly', () => {
+      Renderer.render(<Foo />);
+      const result = Renderer.getRenderOutput();
+
+      expect(result.type).toBe('div');
+    });
+  });
+  `;
+
+  mockfs({
+    "./src/index.tsx": content,
+    "./tests/index.spec.ts": tests,
+  });
+
+  const output = process(tests, "./tests/index.spec.ts", {
+    transform: [
+      [
+        "^.+\\.ts?$",
+        "./dist/esbuild-jest.js",
+        {
+          format: "esm",
+          sourcemap: false,
+          loaders: {
+            '.spec.ts': 'tsx'
+          }
+        },
+      ],
+    ],
+  });
+
+  expect(output.code).toMatchInlineSnapshot(`
+    "import React from \\"react\\";
+    import ReactTestUtils from \\"react-addons-test-utils\\";
+    import Foo from \\"../src/index\\";
+    const Renderer = ReactTestUtils.createRenderer();
+    describe(\\"Example1\\", () => {
+      it(\\"should render correctly\\", () => {
+        Renderer.render(/* @__PURE__ */ React.createElement(Foo, null));
+        const result = Renderer.getRenderOutput();
+        expect(result.type).toBe(\\"div\\");
+      });
+    });
+    "
+  `)
+
+  expect(output.map).toEqual("");
 });
