@@ -1,4 +1,5 @@
-import { Format, Loader, transformSync } from 'esbuild'
+import { fromSource } from "convert-source-map"
+import { Format, Loader, TransformOptions, transformSync } from 'esbuild'
 import path, { extname } from 'path'
 
 const getExt = (str: string) => {
@@ -37,12 +38,12 @@ export function process(content: string, filename: string, config: any) {
   const options: Options = getOptions(config)
 
   const ext = getExt(filename)
-  const loader = options?.loaders && options?.loaders[ext] 
+  const loader = options?.loaders && options?.loaders[ext]
     ? options.loaders[ext]
     : extname(filename).slice(1) as Loader
 
-  const sourcemaps = options?.sourcemap 
-    ? { sourcemap: true, sourcefile: filename }
+  const sourcemapOptions: Partial<TransformOptions> = options?.sourcemap
+    ? { sourcemap: "inline", sourcefile: filename }
     : {}
 
   const result = transformSync(content, {
@@ -51,14 +52,13 @@ export function process(content: string, filename: string, config: any) {
     target: options?.target || 'es2018',
     ...(options?.jsxFactory ? { jsxFactory: options.jsxFactory }: {}),
     ...(options?.jsxFragment ? { jsxFragment: options.jsxFragment }: {}),
-    ...sourcemaps
+    ...sourcemapOptions
   })
+
+  const map = fromSource(result.code)?.toObject() || null
 
   return {
     code: result.code,
-    map: result?.map ? {
-      ...JSON.parse(result.map),
-      sourcesContent: null,
-    }: ''
+    map
   }
 }
