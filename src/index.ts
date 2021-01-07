@@ -1,4 +1,4 @@
-import { Format, Loader, transformSync } from 'esbuild'
+import { Format, Loader, TransformOptions, transformSync } from 'esbuild'
 import path, { extname } from 'path'
 
 const getExt = (str: string) => {
@@ -41,8 +41,8 @@ export function process(content: string, filename: string, config: any) {
     ? options.loaders[ext]
     : extname(filename).slice(1) as Loader
 
-  const sourcemaps = options?.sourcemap 
-    ? { sourcemap: true, sourcefile: filename }
+  const sourcemaps: Partial<TransformOptions> = options?.sourcemap
+    ? { sourcemap: "both", sourcefile: filename }
     : {}
 
   const result = transformSync(content, {
@@ -59,6 +59,6 @@ export function process(content: string, filename: string, config: any) {
     map: result?.map ? {
       ...JSON.parse(result.map),
       sourcesContent: null,
-    }: ''
+    } : null
   }
 }

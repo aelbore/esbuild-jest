@@ -7,11 +7,11 @@ afterEach(() => {
 
 test("ts file", () => {
   const content = `
-    import names from './names'  
+    import names from './names'
 
     export function display() {
       return names
-    } 
+    }
   `;
 
   mockfs({
@@ -57,9 +57,9 @@ test("ts file", () => {
     __export(exports, {
       display: () => display
     });
-    var names = __toModule(require(\\"./names\\"));
+    var import_names = __toModule(require(\\"./names\\"));
     function display() {
-      return names.default;
+      return import_names.default;
     }
     "
   `);
@@ -67,11 +67,11 @@ test("ts file", () => {
 
 test("with transformOptions", () => {
   const content = `
-    import names from './names'  
+    import names from './names'
 
     export function display() {
       return names
-    } 
+    }
   `;
 
   mockfs({
@@ -92,9 +92,9 @@ test("with transformOptions", () => {
   });
 
   expect(output.code).toMatchInlineSnapshot(`
-    "import names2 from \\"./names\\";
+    "import names from \\"./names\\";
     function display() {
-      return names2;
+      return names;
     }
     export {
       display
@@ -102,7 +102,48 @@ test("with transformOptions", () => {
     "
     `);
 
-  expect(output.map).toEqual("");
+  expect(output.map).toBeNull();
+});
+
+test("with sourcemaps", () => {
+  const content = `
+    import names from './names'
+
+    export function display() {
+      return names
+    }
+  `;
+
+  mockfs({
+    "./tests/index.spec.ts": content,
+  });
+
+  const output = process(content, "./tests/index.spec.ts", {
+    transform: [
+      [
+        "^.+\\.ts?$",
+        "./dist/esbuild-jest.js",
+        {
+          format: "esm",
+          sourcemap: true
+        },
+      ],
+    ],
+  });
+
+  expect(output.code).toMatchInlineSnapshot(`
+    "import names from \\"./names\\";
+    function display() {
+      return names;
+    }
+    export {
+      display
+    };
+    //# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsiLi90ZXN0cy9pbmRleC5zcGVjLnRzIl0sCiAgInNvdXJjZXNDb250ZW50IjogWyJcbiAgICBpbXBvcnQgbmFtZXMgZnJvbSAnLi9uYW1lcydcblxuICAgIGV4cG9ydCBmdW5jdGlvbiBkaXNwbGF5KCkge1xuICAgICAgcmV0dXJuIG5hbWVzXG4gICAgfVxuICAiXSwKICAibWFwcGluZ3MiOiAiQUFDSTtBQUVPO0FBQ0wsU0FBTztBQUFBOyIsCiAgIm5hbWVzIjogW10KfQo=
+    "
+    `);
+
+  expect(output.map).toEqual({"version":3,"sources":["./tests/index.spec.ts"],"sourcesContent":null,"mappings":"AACI;AAEO;AACL,SAAO;AAAA;","names":[]});
 });
 
 test("load index.(x)", async () => {
@@ -111,7 +152,7 @@ test("load index.(x)", async () => {
     render() {
       return <div className="hehe">hello there!!!</div>
     }
-  }  
+  }
   `;
 
   const tests = `
@@ -167,5 +208,5 @@ test("load index.(x)", async () => {
     "
   `)
 
-  expect(output.map).toEqual("");
+  expect(output.map).toBeNull();
 });
