@@ -42,7 +42,7 @@ export function process(content: string, filename: string, config: any) {
     : extname(filename).slice(1) as Loader
 
   const sourcemaps: Partial<TransformOptions> = options?.sourcemap
-    ? { sourcemap: "both", sourcefile: filename }
+    ? { sourcemap: "external", sourcefile: filename }
     : {}
 
   const result = transformSync(content, {
@@ -54,11 +54,19 @@ export function process(content: string, filename: string, config: any) {
     ...sourcemaps
   })
 
+  const map = {
+    ...JSON.parse(result.map),
+    sourcesContent: null,
+  }
+
+  // Append the inline sourcemap manually to ensure the "sourcesContent"
+  // is null. Otherwise, breakpoints won't pause within the actual source.
   return {
-    code: result.code,
-    map: result?.map ? {
-      ...JSON.parse(result.map),
-      sourcesContent: null,
-    } : null
+    code:
+      result.code +
+      '\n//# sourceMappingURL=data:application/json;base64,' +
+      Buffer.from(JSON.stringify(map)).toString('base64'),
+    map,
   }
 }
+
