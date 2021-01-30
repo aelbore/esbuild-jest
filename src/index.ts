@@ -35,14 +35,14 @@ export interface Options {
 
 export function process(content: string, filename: string, config: any) {
   const options: Options = getOptions(config)
-  const enableSourcemaps =  typeof options?.sourcemap == 'undefined' || options?.sourcemap
+  const enableSourcemaps = options?.sourcemap || false
 
   const ext = getExt(filename)
   const loader = options?.loaders && options?.loaders[ext] 
-    ? options.loaders[ext]
+    ? options.loaders[ext]  
     : extname(filename).slice(1) as Loader
 
-  const sourcemaps: Partial<TransformOptions> = enableSourcemaps ? { sourcemap: "external", sourcefile: filename } : {}
+  const sourcemaps: Partial<TransformOptions> = enableSourcemaps ? { sourcemap: true, sourcesContent: false, sourcefile: filename } : {}
 
   const result = transformSync(content, {
     loader,
@@ -62,9 +62,7 @@ export function process(content: string, filename: string, config: any) {
 
     // Append the inline sourcemap manually to ensure the "sourcesContent"
     // is null. Otherwise, breakpoints won't pause within the actual source.
-    code = code +
-    '\n//# sourceMappingURL=data:application/json;base64,' +
-    Buffer.from(JSON.stringify(map)).toString('base64')
+    code = code + '\n//# sourceMappingURL=data:application/json;base64,' + Buffer.from(JSON.stringify(map)).toString('base64')
   } else {
     map = null
   }

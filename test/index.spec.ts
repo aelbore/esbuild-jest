@@ -7,13 +7,10 @@ afterEach(() => {
 
 test("ts file", () => {
   const content = `
-    import names from './names'
-
+    import names from './names'  
     export function display() {
       return names
-    }
-
-    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOm51bGwsIm1hcHBpbmdzIjoiIiwibmFtZXMiOltdfQ==
+    } 
   `;
 
   mockfs({
@@ -63,8 +60,7 @@ test("ts file", () => {
     function display() {
       return import_names.default;
     }
-
-    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vdGVzdHMvaW5kZXguc3BlYy50cyJdLCJzb3VyY2VzQ29udGVudCI6bnVsbCwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQUE7QUFBQTtBQUFBO0FBQ0ksbUJBQWtCO0FBRVg7QUFDTCxTQUFPO0FBQUE7IiwibmFtZXMiOltdfQ=="
+    "
   `);
 });
 
@@ -143,10 +139,10 @@ test("with sourcemaps", () => {
       display
     };
 
-    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vdGVzdHMvaW5kZXguc3BlYy50cyJdLCJzb3VyY2VzQ29udGVudCI6bnVsbCwibWFwcGluZ3MiOiJBQUNJO0FBRU87QUFDTCxTQUFPO0FBQUE7IiwibmFtZXMiOltdfQ=="
+    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vdGVzdHMvaW5kZXguc3BlYy50cyJdLCJtYXBwaW5ncyI6IkFBQ0k7QUFFTztBQUNMLFNBQU87QUFBQTsiLCJuYW1lcyI6W10sInNvdXJjZXNDb250ZW50IjpudWxsfQ=="
     `);
 
-  expect(output.map).toEqual({"version":3,"sources":["./tests/index.spec.ts"],"sourcesContent":null,"mappings":"AACI;AAEO;AACL,SAAO;AAAA;","names":[]});
+  expect(output.map).toEqual({"version":3,"sources":["./tests/index.spec.ts"],"mappings":"AACI;AAEO;AACL,SAAO;AAAA;","names":[],"sourcesContent":null});
 });
 
 test("load index.(x)", async () => {
