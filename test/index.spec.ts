@@ -7,11 +7,13 @@ afterEach(() => {
 
 test("ts file", () => {
   const content = `
-    import names from './names'  
+    import names from './names'
 
     export function display() {
       return names
-    } 
+    }
+
+    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOm51bGwsIm1hcHBpbmdzIjoiIiwibmFtZXMiOltdfQ==
   `;
 
   mockfs({
@@ -57,21 +59,22 @@ test("ts file", () => {
     __export(exports, {
       display: () => display
     });
-    var names = __toModule(require(\\"./names\\"));
+    var import_names = __toModule(require(\\"./names\\"));
     function display() {
-      return names.default;
+      return import_names.default;
     }
-    "
+
+    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vdGVzdHMvaW5kZXguc3BlYy50cyJdLCJzb3VyY2VzQ29udGVudCI6bnVsbCwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQUE7QUFBQTtBQUFBO0FBQ0ksbUJBQWtCO0FBRVg7QUFDTCxTQUFPO0FBQUE7IiwibmFtZXMiOltdfQ=="
   `);
 });
 
 test("with transformOptions", () => {
   const content = `
-    import names from './names'  
+    import names from './names'
 
     export function display() {
       return names
-    } 
+    }
   `;
 
   mockfs({
@@ -92,9 +95,9 @@ test("with transformOptions", () => {
   });
 
   expect(output.code).toMatchInlineSnapshot(`
-    "import names2 from \\"./names\\";
+    "import names from \\"./names\\";
     function display() {
-      return names2;
+      return names;
     }
     export {
       display
@@ -102,7 +105,48 @@ test("with transformOptions", () => {
     "
     `);
 
-  expect(output.map).toEqual("");
+  expect(output.map).toBeNull();
+});
+
+test("with sourcemaps", () => {
+  const content = `
+    import names from './names'
+
+    export function display() {
+      return names
+    }
+  `;
+
+  mockfs({
+    "./tests/index.spec.ts": content,
+  });
+
+  const output = process(content, "./tests/index.spec.ts", {
+    transform: [
+      [
+        "^.+\\.ts?$",
+        "./dist/esbuild-jest.js",
+        {
+          format: "esm",
+          sourcemap: true
+        },
+      ],
+    ],
+  });
+
+  expect(output.code).toMatchInlineSnapshot(`
+    "import names from \\"./names\\";
+    function display() {
+      return names;
+    }
+    export {
+      display
+    };
+
+    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vdGVzdHMvaW5kZXguc3BlYy50cyJdLCJzb3VyY2VzQ29udGVudCI6bnVsbCwibWFwcGluZ3MiOiJBQUNJO0FBRU87QUFDTCxTQUFPO0FBQUE7IiwibmFtZXMiOltdfQ=="
+    `);
+
+  expect(output.map).toEqual({"version":3,"sources":["./tests/index.spec.ts"],"sourcesContent":null,"mappings":"AACI;AAEO;AACL,SAAO;AAAA;","names":[]});
 });
 
 test("load index.(x)", async () => {
@@ -111,7 +155,7 @@ test("load index.(x)", async () => {
     render() {
       return <div className="hehe">hello there!!!</div>
     }
-  }  
+  }
   `;
 
   const tests = `
@@ -167,5 +211,5 @@ test("load index.(x)", async () => {
     "
   `)
 
-  expect(output.map).toEqual("");
+  expect(output.map).toBeNull();
 });
