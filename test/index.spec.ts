@@ -1,5 +1,5 @@
 import mockfs from "mock-fs";
-import { process } from "../src/index";
+import { createTransformer } from "../src/index";
 
 afterEach(() => {
   mockfs.restore();
@@ -17,14 +17,7 @@ test("ts file", () => {
     "./tests/index.spec.ts": content,
   });
 
-  const output = process(content, "./tests/index.spec.ts", {
-    transform: [
-      [
-        "^.+\\.ts?$",
-         "./dist/esbuild-jest.js"
-        ]
-      ],
-  });
+  const output = createTransformer().process(content, "./tests/index.spec.ts")
 
   expect(output.code).toMatchInlineSnapshot(`
     "var __create = Object.create;
@@ -77,18 +70,12 @@ test("with transformOptions", () => {
     "./tests/index.spec.ts": content,
   });
 
-  const output = process(content, "./tests/index.spec.ts", {
-    transform: [
-      [
-        "^.+\\.ts?$",
-        "./dist/esbuild-jest.js",
-        {
-          format: "esm",
-          sourcemap: false
-        },
-      ],
-    ],
-  });
+  const transformer = createTransformer({ 
+    format: 'esm', 
+    sourcemap: false 
+  })
+
+  const output = transformer.process(content, "./tests/index.spec.ts")
 
   expect(output.code).toMatchInlineSnapshot(`
     "import names from \\"./names\\";
@@ -117,18 +104,12 @@ test("with sourcemaps", () => {
     "./tests/index.spec.ts": content,
   });
 
-  const output = process(content, "./tests/index.spec.ts", {
-    transform: [
-      [
-        "^.+\\.ts?$",
-        "./dist/esbuild-jest.js",
-        {
-          format: "esm",
-          sourcemap: true
-        },
-      ],
-    ],
-  });
+  const transformer = createTransformer({
+    format: "esm",
+    sourcemap: true
+  })
+
+  const output = transformer.process(content, "./tests/index.spec.ts")
 
   expect(output.code).toMatchInlineSnapshot(`
     "import names from \\"./names\\";
@@ -176,21 +157,15 @@ test("load index.(x)", async () => {
     "./tests/index.spec.ts": tests,
   });
 
-  const output = process(tests, "./tests/index.spec.ts", {
-    transform: [
-      [
-        "^.+\\.ts?$",
-        "./dist/esbuild-jest.js",
-        {
-          format: "esm",
-          sourcemap: false,
-          loaders: {
-            '.spec.ts': 'tsx'
-          }
-        },
-      ],
-    ],
-  });
+  const transformer = createTransformer({
+    format: "esm",
+    sourcemap: false,
+    loaders: {
+      '.spec.ts': 'tsx'
+    }   
+  })
+
+  const output = transformer.process(tests, "./tests/index.spec.ts");
 
   expect(output.code).toMatchInlineSnapshot(`
     "import React from \\"react\\";

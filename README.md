@@ -43,7 +43,7 @@ export interface Options {
     "^.+\\.tsx?$": [ 
       "esbuild-jest", 
       { 
-        sourcemap: false,
+        sourcemap: true,
         loaders: {
           '.spec.ts': 'tsx'
         }
@@ -52,6 +52,7 @@ export interface Options {
   }
 }
 ```
+
 
 
 
