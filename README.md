@@ -5,6 +5,8 @@ With this transformer you can use and transform (ts, js, tsx and jsx) files
 
 [![npm](https://img.shields.io/npm/v/esbuild-jest.svg)](https://www.npmjs.com/package/esbuild-jest)
 
+| Note: Jest mocks are not currently supported, for more information see https://github.com/aelbore/esbuild-jest/issues/12 and https://github.com/evanw/esbuild/issues/412
+
 ## Install
 
 ```bash
