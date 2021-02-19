@@ -7,6 +7,7 @@
     "resolveJsonModule": true,
     "importHelpers": true,
     "esModuleInterop": true, 
+    "jsx": "react",
     "lib" :[
       "dom",
       "es2015",

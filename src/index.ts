@@ -1,6 +1,8 @@
 import { Format, Loader, TransformOptions, transformSync } from 'esbuild'
 import path, { extname } from 'path'
 
+import { babelTransform } from './transformer'
+
 const getExt = (str: string) => {
   const basename = path.basename(str);
   const firstDot = basename.indexOf('.');
@@ -24,7 +26,7 @@ export interface Options {
 }
 
 export const createTransformer = (options?: Options) => ({
-  process(content: string, filename: string) {
+  process(content: string, filename: string, config: any, opts?: any) {
     const enableSourcemaps = options?.sourcemap || false
   
     const ext = getExt(filename)
@@ -34,7 +36,14 @@ export const createTransformer = (options?: Options) => ({
   
     const sourcemaps: Partial<TransformOptions> = enableSourcemaps ? { sourcemap: true, sourcesContent: false, sourcefile: filename } : {}
   
-    const result = transformSync(content, {
+    const source = babelTransform({
+      sourceText: content,
+      sourcePath: filename,
+      config,
+      options: opts
+    })
+
+    const result = transformSync(source, {
       loader,
       format: options?.format as Format || 'cjs',
       target: options?.target || 'es2018',
@@ -60,4 +69,3 @@ export const createTransformer = (options?: Options) => ({
     return { code, map }
   }
 })
-
