@@ -7,9 +7,9 @@ import { defaults } from 'jest-config'
 import { display } from '../examples/names-ts/index'
 
 /// TODO: import directly to ./src/index.ts
-import transformer from '../dist/esbuild-jest'
+import transformer, { Options } from '../dist/esbuild-jest'
 
-const process = (sourcePath: string, options = {}) => {
+const process = (sourcePath: string, options?: Options) => {
   const content = fs.readFileSync(sourcePath, 'utf-8')
 
   const Transformer = transformer.createTransformer({ 
