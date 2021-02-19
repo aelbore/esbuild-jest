@@ -1,49 +1,46 @@
+import { extname } from 'path'
+
+import { Config } from '@jest/types'
+import { TransformOptions as JestTransformOptions, Transformer } from '@jest/transform'
 import { Format, Loader, TransformOptions, transformSync } from 'esbuild'
-import path, { extname } from 'path'
 
+import { Options } from './options'
 import { babelTransform } from './transformer'
+import { getExt, loaders } from './utils'
 
-const getExt = (str: string) => {
-  const basename = path.basename(str);
-  const firstDot = basename.indexOf('.');
-  const lastDot = basename.lastIndexOf('.');
-  const extname = path.extname(basename).replace(/(\.[a-z0-9]+).*/i, '$1');
+const createTransformer = (options?: Options) => ({
+  process(content: string, 
+    filename: string, 
+    config: Config.ProjectConfig, 
+    opts?: JestTransformOptions
+  ) {
+    const sources = { code: content }
+    const ext = getExt(filename), extName = extname(filename).slice(1)
 
-  if (firstDot === lastDot) return extname
-
-  return basename.slice(firstDot, lastDot) + extname
-}
-
-export interface Options {
-  jsxFactory?: string
-  jsxFragment?: string
-  sourcemap?: boolean | 'inline' | 'external'
-  loaders?: {
-    [ext: string]: Loader
-  },
-  target?: string
-  format?: string
-}
-
-export const createTransformer = (options?: Options) => ({
-  process(content: string, filename: string, config: any, opts?: any) {
     const enableSourcemaps = options?.sourcemap || false
-  
-    const ext = getExt(filename)
-    const loader = options?.loaders && options?.loaders[ext] 
-      ? options.loaders[ext]  
-      : extname(filename).slice(1) as Loader
-  
-    const sourcemaps: Partial<TransformOptions> = enableSourcemaps ? { sourcemap: true, sourcesContent: false, sourcefile: filename } : {}
-  
-    const source = babelTransform({
-      sourceText: content,
-      sourcePath: filename,
-      config,
-      options: opts
-    })
+    const loader = (options?.loaders && options?.loaders[ext] 
+      ? options.loaders[ext]
+      : loaders.includes(extName) ? extName: 'text'
+    ) as Loader
+    const sourcemaps: Partial<TransformOptions> = enableSourcemaps 
+      ? { sourcemap: true, sourcesContent: false, sourcefile: filename } 
+      : {}
 
-    const result = transformSync(source, {
+    /// this logic or code from 
+    /// https://github.com/threepointone/esjest-transform/blob/main/src/index.js
+    /// this will supoort the jest.mock
+    /// https://github.com/aelbore/esbuild-jest/issues/12
+    if (sources.code.indexOf("ock(") >= 0 || opts?.instrument) {
+      const source = babelTransform({
+        sourceText: content,
+        sourcePath: filename,
+        config,
+        options: opts
+      })
+      sources.code = source
+    }
+
+    const result = transformSync(sources.code, {
       loader,
       format: options?.format as Format || 'cjs',
       target: options?.target || 'es2018',
@@ -69,3 +66,12 @@ export const createTransformer = (options?: Options) => ({
     return { code, map }
   }
 })
+
+const transformer: Pick<Transformer, 'canInstrument' | 'createTransformer'> = {
+  canInstrument: true,
+  createTransformer
+}
+
+export * from './options'
+
+export default transformer
