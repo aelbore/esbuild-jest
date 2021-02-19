@@ -1,0 +1,59 @@
+name: esbuild-jest
+
+on: [push]
+
+jobs:
+  ubuntu-latest:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 15.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: yarn
+    - run: yarn build
+    - run: yarn test
+      env:
+        CI: true
+  windows-latest:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 15.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: yarn
+    - run: yarn build
+    - run: yarn test
+      env:
+        CI: true
+  macos-latest:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 15.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: yarn
+    - run: yarn build
+    - run: yarn test
+      env:
+        CI: true
