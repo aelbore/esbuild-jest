@@ -5,7 +5,6 @@ import { TransformOptions as JestTransformOptions, Transformer } from '@jest/tra
 import { Format, Loader, TransformOptions, transformSync } from 'esbuild'
 
 import { Options } from './options'
-import { babelTransform } from './transformer'
 import { getExt, loaders } from './utils'
 
 const createTransformer = (options?: Options) => ({
@@ -28,10 +27,11 @@ const createTransformer = (options?: Options) => ({
 
     /// this logic or code from 
     /// https://github.com/threepointone/esjest-transform/blob/main/src/index.js
-    /// this will supoort the jest.mock
+    /// this will support the jest.mock
     /// https://github.com/aelbore/esbuild-jest/issues/12
+    /// TODO: transform the jest.mock to a function using babel traverse/parse then hoist it
     if (sources.code.indexOf("ock(") >= 0 || opts?.instrument) {
-      const source = babelTransform({
+      const source = require('./transformer').babelTransform({
         sourceText: content,
         sourcePath: filename,
         config,

@@ -1,13 +1,13 @@
 {
   "name": "esbuild-jest",
-  "version": "0.5.0-beta.1",
+  "version": "0.5.0-beta.2",
   "description": "Jest plugin to use esbuild for transformation",
   "main": "esbuild-jest.js",
   "module": "esbuild-jest.es.js",
   "typings": "esbuild-jest.d.ts",
   "scripts": {
     "postinstall": "yarn build",
-    "build": "aria-build -d --swc",
+    "build": "ts-node ./tools/build.ts",
     "test": "jest --clearCache && jest --detectOpenHandles"
   },
   "repository": {

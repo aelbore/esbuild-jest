@@ -6,8 +6,9 @@ import { defaults } from 'jest-config'
 
 import { display } from '../examples/names-ts/index'
 
-/// TODO: import directly to ./src/index.ts
-import transformer, { Options } from '../dist/esbuild-jest'
+/// using @babel/preset-typescript
+/// i was able to us directly the typescript code without bundle the code
+import transformer, { Options } from '../src/index'
 
 const process = (sourcePath: string, options?: Options) => {
   const content = fs.readFileSync(sourcePath, 'utf-8')
