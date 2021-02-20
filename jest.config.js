@@ -2,7 +2,8 @@ module.exports = {
   transform: {
     "\\.[jt]sx?$":  [ 'esbuild-jest', { 
         loaders: {
-          '.spec.js': 'jsx'
+          '.spec.js': 'jsx',
+          '.js': 'jsx'
         }
       }
     ]
