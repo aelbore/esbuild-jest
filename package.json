@@ -29,27 +29,27 @@
     "esbuild": ">=0.8.50"
   },
   "devDependencies": {
-    "@babel/preset-typescript": "^7.12.17",
-    "@swc/core": "^1.2.48",
+    "@babel/preset-typescript": "^7.13.0",
+    "@swc/core": "^1.2.49",
     "@types/jest": "^26.0.20",
     "@types/mock-fs": "^4.13.0",
     "@types/node": "^14.14.31",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
-    "aria-build": "^0.7.2",
-    "aria-fs": "^0.7.2",
-    "esbuild": "^0.8.49",
+    "aria-build": "^0.7.3",
+    "aria-fs": "^0.7.3",
+    "esbuild": "^0.8.54",
     "jest": "^26.6.3",
     "jest-config": "^26.6.3",
     "prettier": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "tslib": "^2.1.0",
-    "typescript": "^4.1.5"
+    "typescript": "^4.2.2"
   },
   "dependencies": {
-    "@babel/core": "^7.12.17",
-    "@babel/plugin-transform-modules-commonjs": "^7.12.13",
+    "@babel/core": "^7.13.8",
+    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
     "babel-jest": "^26.6.3"
   },
   "babel": {
