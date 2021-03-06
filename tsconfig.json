@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es2018",
     "module": "commonjs",
     "outDir": "dist",
@@ -14,6 +15,9 @@
       "es2017",
       "es2018",
       "es2019"
-    ]
+    ],
+    "paths": {
+      "calculator": [ "./examples/ts-jsconfig-paths/libs/calculator.ts" ]
+    }
   }
 }
