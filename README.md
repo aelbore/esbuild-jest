@@ -54,5 +54,5 @@ export interface Options {
 }
 ```
 
-| Note: if you are using tsconfig.json and jsconfig.json with "paths", Please look `alias-hq` and there documentation https://github.com/davestewart/alias-hq/blob/master/docs/integrations.md
+> Note: if you are using tsconfig.json and jsconfig.json with "paths", Please look `alias-hq` and there documentation https://github.com/davestewart/alias-hq/blob/master/docs/integrations.md
 
