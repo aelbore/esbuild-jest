@@ -22,7 +22,7 @@ const createTransformer = (options?: Options) => ({
       : loaders.includes(extName) ? extName: 'text'
     ) as Loader
     const sourcemaps: Partial<TransformOptions> = enableSourcemaps 
-      ? { sourcemap: true, sourcesContent: false, sourcefile: filename } 
+      ? { sourcemap: enableSourcemaps, sourcesContent: false, sourcefile: filename } 
       : {}
 
     /// this logic or code from 
