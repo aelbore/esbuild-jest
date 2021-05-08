@@ -8,7 +8,8 @@
   "scripts": {
     "postinstall": "yarn build",
     "build": "ts-node ./tools/build.ts",
-    "test": "jest --clearCache && jest --detectOpenHandles"
+    "test": "jest --clearCache && jest --detectOpenHandles",
+    "test:coverage": "jest --clearCache && jest --coverage"
   },
   "repository": {
     "type": "git",

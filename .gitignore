@@ -2,3 +2,4 @@ node_modules
 dist
 .envrc
 default.nix
+coverage
