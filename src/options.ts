@@ -1,4 +1,4 @@
-import { Loader } from 'esbuild'
+import type { Loader } from 'esbuild'
 
 export interface Options {
   jsxFactory?: string

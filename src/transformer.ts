@@ -1,13 +1,13 @@
-import { TransformOptions } from '@jest/transform'
-import { Config } from '@jest/types'
-
 import babelJest from 'babel-jest'
 
+import type { TransformOptions } from '@jest/transform'
+import type { Config } from '@jest/types'
+
 const { process } = babelJest.createTransformer({
-  plugins: [ "@babel/plugin-transform-modules-commonjs" ],
-  parserOpts: { 
-    plugins: ["jsx", "typescript"],
-  }
+  presets: [
+    ['@babel/preset-env', {targets: {node: 'current'}}],
+    "@babel/preset-react"
+  ]
 })
 
 export interface BabelTransformOptions {

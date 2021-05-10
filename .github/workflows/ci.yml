@@ -1,6 +1,6 @@
 name: esbuild-jest
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   ubuntu-latest:
@@ -19,6 +19,7 @@ jobs:
     - run: yarn
     - run: yarn build
     - run: yarn test
+    - run: yarn test:coverage
       env:
         CI: true
   windows-latest:
@@ -37,6 +38,7 @@ jobs:
     - run: yarn
     - run: yarn build
     - run: yarn test
+    - run: yarn test:coverage
       env:
         CI: true
   macos-latest:
@@ -55,5 +57,6 @@ jobs:
     - run: yarn
     - run: yarn build
     - run: yarn test
+    - run: yarn test:coverage
       env:
         CI: true

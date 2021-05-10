@@ -1,4 +1,4 @@
-import path from 'path' 
+import path from 'path'
 
 export const loaders = ["js", "jsx", "ts", "tsx", "json"]
 
