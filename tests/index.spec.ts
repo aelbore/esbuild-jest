@@ -95,3 +95,32 @@ test('should not have sourcemap [default]', () => {
   const output = process('./examples/names-ts/index.ts', { sourcemap: false })
   expect(output.map).toBeNull()
 })
+
+test('should be able to disable instrument', () => {
+  const output = process('./examples/names-ts/index.spec.ts', { instrument: false })
+
+  expect(output.code).toMatchInlineSnapshot(`
+    \"import {expect} from \\"@jest/globals\\";
+    import {display} from \\"./index\\";
+    jest.mock(\\"./index\\", () => {
+      return {
+        display() {
+          return [\\"Joe\\"];
+        }
+      };
+    });
+    test(\\"should parse with [jest.mock]\\", () => {
+      expect(display()).toEqual([\\"Joe\\"]);
+    });
+
+    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vZXhhbXBsZXMvbmFtZXMtdHMvaW5kZXguc3BlYy50cyJdLCJtYXBwaW5ncyI6IkFBQUE7QUFFQTtBQUVBLEtBQUssS0FBSyxXQUFXO0FBQ25CLFNBQU87QUFBQSxJQUNMO0FBQ0UsYUFBTyxDQUFFO0FBQUE7QUFBQTtBQUFBO0FBS2YsS0FBSyxpQ0FBaUM7QUFDcEMsU0FBTyxXQUFXLFFBQVEsQ0FBRTtBQUFBOyIsIm5hbWVzIjpbXSwic291cmNlc0NvbnRlbnQiOm51bGx9"
+  `)
+
+   expect(output.map).toEqual(      {
+    version: 3,
+    sources: [ './examples/names-ts/index.spec.ts' ],
+    mappings: 'AAAA;AAEA;AAEA,KAAK,KAAK,WAAW;AACnB,SAAO;AAAA,IACL;AACE,aAAO,CAAE;AAAA;AAAA;AAAA;AAKf,KAAK,iCAAiC;AACpC,SAAO,WAAW,QAAQ,CAAE;AAAA;',
+    names: [],
+    sourcesContent: null
+  })
+})

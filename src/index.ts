@@ -30,7 +30,7 @@ const createTransformer = (options?: Options) => ({
     /// this will support the jest.mock
     /// https://github.com/aelbore/esbuild-jest/issues/12
     /// TODO: transform the jest.mock to a function using babel traverse/parse then hoist it
-    if (sources.code.indexOf("ock(") >= 0 || opts?.instrument) {
+    if (options.instrument !== false && (sources.code.indexOf("ock(") >= 0 || opts?.instrument || options?.instrument)) {
       const source = require('./transformer').babelTransform({
         sourceText: content,
         sourcePath: filename,
