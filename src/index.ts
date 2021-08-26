@@ -1,6 +1,5 @@
 import { extname } from 'path'
 
-import { Config } from '@jest/types'
 import { TransformOptions as JestTransformOptions, Transformer } from '@jest/transform'
 import { Format, Loader, TransformOptions, transformSync } from 'esbuild'
 
@@ -10,7 +9,6 @@ import { getExt, loaders } from './utils'
 const createTransformer = (options?: Options) => ({
   process(content: string, 
     filename: string, 
-    config: Config.ProjectConfig, 
     opts?: JestTransformOptions
   ) {
     const sources = { code: content }
@@ -34,7 +32,6 @@ const createTransformer = (options?: Options) => ({
       const source = require('./transformer').babelTransform({
         sourceText: content,
         sourcePath: filename,
-        config,
         options: opts
       })
       sources.code = source

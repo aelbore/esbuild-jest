@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import * as React from "react";
 import { render } from "react-dom";
 import { afterEach, beforeEach, expect, it, jest } from "@jest/globals";
