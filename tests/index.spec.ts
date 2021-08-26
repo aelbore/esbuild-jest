@@ -19,8 +19,8 @@ const process = (sourcePath: string, options?: Options) => {
     ...(options || {})
   })
 
-  const config = { ...defaults, cwd: path.resolve() } as any
-  const output = Transformer.process(content, sourcePath, config) as { code: string, map: string }
+  const opts = { config: { ...defaults, cwd: path.resolve() } } as any
+  const output = Transformer.process(content, sourcePath, opts) as { code: string, map: string }
 
   return { ...output }
 }
