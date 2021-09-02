@@ -28,7 +28,7 @@ describe('getEsbuildConfig', () => {
       });
     });
 
-    xtest('.js loader returns correct config with compound extension', () => {
+    test('.js loader returns correct config with compound extension', () => {
       const config = getEsbuildConfig(
         { loaders: { '.js': 'jsx' } },
         'filename.test.js'
