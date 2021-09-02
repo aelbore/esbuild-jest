@@ -1,14 +1,28 @@
 import path from 'path' 
+import { Format, Loader, TransformOptions } from 'esbuild'
 
-export const loaders = ["js", "jsx", "ts", "tsx", "json"]
+const loaders = ['js', 'jsx', 'ts', 'tsx', 'json']
 
-export const getExt = (str: string) => {
-  const basename = path.basename(str);
-  const firstDot = basename.indexOf('.');
-  const lastDot = basename.lastIndexOf('.');
-  const extname = path.extname(basename).replace(/(\.[a-z0-9]+).*/i, '$1');
+export const getEsbuildConfig = (options, filename) => {
+  const ext = path.extname(filename),
+    extName = path.extname(filename).slice(1)
+  const loader = (options?.loaders && options?.loaders[ext]
+    ? options.loaders[ext]
+    : loaders.includes(extName)
+    ? extName
+    : 'text') as Loader
 
-  if (firstDot === lastDot) return extname
+  const enableSourcemaps = options?.sourcemap || false
+  const sourcemaps: Partial<TransformOptions> = enableSourcemaps
+    ? { sourcemap: true, sourcesContent: false, sourcefile: filename }
+    : {}
 
-  return basename.slice(firstDot, lastDot) + extname
+  return {
+    loader,
+    format: (options?.format as Format) || 'cjs',
+    target: options?.target || 'es2018',
+    ...(options?.jsxFactory ? { jsxFactory: options.jsxFactory } : {}),
+    ...(options?.jsxFragment ? { jsxFragment: options.jsxFragment } : {}),
+    ...sourcemaps,
+  }
 }
