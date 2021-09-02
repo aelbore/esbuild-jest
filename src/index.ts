@@ -1,11 +1,9 @@
-import { extname } from 'path'
-
 import { Config } from '@jest/types'
 import { TransformOptions as JestTransformOptions, Transformer } from '@jest/transform'
-import { Format, Loader, TransformOptions, transformSync } from 'esbuild'
+import { transformSync } from 'esbuild'
 
 import { Options } from './options'
-import { getExt, loaders } from './utils'
+import { getEsbuildConfig } from './utils'
 
 const createTransformer = (options?: Options) => ({
   process(content: string, 
@@ -14,16 +12,6 @@ const createTransformer = (options?: Options) => ({
     opts?: JestTransformOptions
   ) {
     const sources = { code: content }
-    const ext = getExt(filename), extName = extname(filename).slice(1)
-
-    const enableSourcemaps = options?.sourcemap || false
-    const loader = (options?.loaders && options?.loaders[ext] 
-      ? options.loaders[ext]
-      : loaders.includes(extName) ? extName: 'text'
-    ) as Loader
-    const sourcemaps: Partial<TransformOptions> = enableSourcemaps 
-      ? { sourcemap: true, sourcesContent: false, sourcefile: filename } 
-      : {}
 
     /// this logic or code from 
     /// https://github.com/threepointone/esjest-transform/blob/main/src/index.js
@@ -40,17 +28,11 @@ const createTransformer = (options?: Options) => ({
       sources.code = source
     }
 
-    const result = transformSync(sources.code, {
-      loader,
-      format: options?.format as Format || 'cjs',
-      target: options?.target || 'es2018',
-      ...(options?.jsxFactory ? { jsxFactory: options.jsxFactory }: {}),
-      ...(options?.jsxFragment ? { jsxFragment: options.jsxFragment }: {}),
-      ...sourcemaps
-    })
+    const esbuildConfig = getEsbuildConfig(options, filename)
+    const result = transformSync(sources.code, esbuildConfig)
   
     let { map, code } = result;
-    if (enableSourcemaps) {
+    if (esbuildConfig.sourcemap) {
       map = {
         ...JSON.parse(result.map),
         sourcesContent: null,
