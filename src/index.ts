@@ -46,6 +46,7 @@ const createTransformer = (options?: Options) => ({
       target: options?.target || 'es2018',
       ...(options?.jsxFactory ? { jsxFactory: options.jsxFactory }: {}),
       ...(options?.jsxFragment ? { jsxFragment: options.jsxFragment }: {}),
+      ...(options?.define ? { define: options.define }: {}),
       ...sourcemaps
     })
   

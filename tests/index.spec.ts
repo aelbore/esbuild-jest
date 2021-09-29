@@ -25,6 +25,17 @@ const process = (sourcePath: string, options?: Options) => {
   return { ...output }
 }
 
+test('esbuild transform option', () => {
+    const output = process('./examples/esbuild-define/index.ts', {
+        define: {
+            "EXAMPLE_VAR": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        }
+    })
+
+    expect(output.code).toEqual(expect.stringContaining("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+})
+
+
 test('ts file', () => {
   const names = display()
   expect(names.includes('Jane')).toBeTruthy()
