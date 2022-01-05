@@ -55,13 +55,13 @@ test('should have sourcemap with [jest.mock]', () => {
       (0, _globals.expect)((0, _index.display)()).toEqual([\\"Joe\\"]);
     });
     
-    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LnNwZWMudHMiXSwibWFwcGluZ3MiOiI7QUFJQSxjQUFLLEtBQUssV0FBVztBQUNuQixTQUFPO0lBQ0w7QUFDRSxhQUFPLENBQUU7Ozs7QUFQZixJQUFBLFdBQUEsUUFBQTtBQUVBLElBQUEsU0FBQSxRQUFBOzs7Ozs7OztBQVVBLEtBQUssaUNBQWlDO0FBQ3BDLEVBQUEsSUFBQSxTQUFBLFFBQU8sSUFBQSxPQUFBLFlBQVcsUUFBUSxDQUFFOzsiLCJuYW1lcyI6W10sInNvdXJjZXNDb250ZW50IjpudWxsfQ=="
+    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LnNwZWMudHMiXSwibWFwcGluZ3MiOiI7QUFRQSxjQUFLLEtBQUssV0FBVyxNQUFNO0FBQ3pCLFNBQU87SUFDTCxVQUFVO0FBQ1IsYUFBTyxDQUFFOzs7O0FBWGYsSUFBQSxXQUFBLFFBQUE7QUFFQSxJQUFBLFNBQUEsUUFBQTs7Ozs7Ozs7QUFFQSxLQUFLLGlDQUFpQyxNQUFNO0FBQzFDLEVBQUEsSUFBQSxTQUFBLFFBQU8sSUFBQSxPQUFBLFlBQVcsUUFBUSxDQUFFOzsiLCJuYW1lcyI6W10sInNvdXJjZXNDb250ZW50IjpudWxsfQ=="
   `)
   
    expect(output.map).toEqual(      {
     version: 3,
     sources: [ 'index.spec.ts' ],
-    mappings: ';AAIA,cAAK,KAAK,WAAW;AACnB,SAAO;IACL;AACE,aAAO,CAAE;;;;AAPf,IAAA,WAAA,QAAA;AAEA,IAAA,SAAA,QAAA;;;;;;;;AAUA,KAAK,iCAAiC;AACpC,EAAA,IAAA,SAAA,QAAO,IAAA,OAAA,YAAW,QAAQ,CAAE;;',
+    mappings: ';AAQA,cAAK,KAAK,WAAW,MAAM;AACzB,SAAO;IACL,UAAU;AACR,aAAO,CAAE;;;;AAXf,IAAA,WAAA,QAAA;AAEA,IAAA,SAAA,QAAA;;;;;;;;AAEA,KAAK,iCAAiC,MAAM;AAC1C,EAAA,IAAA,SAAA,QAAO,IAAA,OAAA,YAAW,QAAQ,CAAE;;',
     names: [],
     sourcesContent: null
   })
@@ -79,13 +79,13 @@ test('should have sourcemap without [jest.mock]', () => {
       display
     };
 
-    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vZXhhbXBsZXMvbmFtZXMtdHMvaW5kZXgudHMiXSwibWFwcGluZ3MiOiJBQUFBO0FBRU87QUFDTCxTQUFPO0FBQUE7IiwibmFtZXMiOltdLCJzb3VyY2VzQ29udGVudCI6bnVsbH0="
+    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vZXhhbXBsZXMvbmFtZXMtdHMvaW5kZXgudHMiXSwibWFwcGluZ3MiOiJBQUFBO0FBRU8sbUJBQW1CO0FBQ3hCLFNBQU87QUFBQTsiLCJuYW1lcyI6W10sInNvdXJjZXNDb250ZW50IjpudWxsfQ=="
   `)
 
   expect(output.map).toEqual({
     version: 3,
     sources: [ './examples/names-ts/index.ts' ],
-    mappings: 'AAAA;AAEO;AACL,SAAO;AAAA;',
+    mappings: 'AAAA;AAEO,mBAAmB;AACxB,SAAO;AAAA;',
     names: [],
     sourcesContent: null
   })
