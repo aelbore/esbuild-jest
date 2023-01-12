@@ -1,3 +1,5 @@
+import type { Config } from '@jest/types'
+
 import fs from 'fs'
 import path from 'path'
 
@@ -9,18 +11,39 @@ import { display } from '../examples/names-ts/index'
 /// using @babel/preset-typescript
 /// i was able to us directly the typescript code without bundle the code
 import transformer, { Options } from '../src/index'
+import { TransformOptions } from '@jest/transform'
 
-const process = (sourcePath: string, options?: Options) => {
+// More info: https://github.com/facebook/jest/blob/61a64b53fe72b00fb17d7aabe5a54c4d415a845f/packages/test-utils/src/config.ts#L69
+const config: Config.ProjectConfig = {
+  ...defaults,
+  cwd: path.resolve(),
+  id: 'test_name',
+  moduleNameMapper: [],
+  rootDir: '/test_root_dir/',
+  sandboxInjectedGlobals: [],
+  snapshotResolver: undefined,
+  transform: [],
+};
+
+// More info: https://github.com/facebook/jest/blob/61a64b53fe72b00fb17d7aabe5a54c4d415a845f/packages/babel-jest/src/__tests__/index.ts#L54
+const opts = {
+  cacheFS: new Map<string, string>(),
+  config,
+  configString: JSON.stringify(config),
+  instrument: false,
+  transformerConfig: {},
+} as TransformOptions<Options>;
+
+const process = (sourcePath: string, options: Options = {}) => {
   const content = fs.readFileSync(sourcePath, 'utf-8')
 
   const Transformer = transformer.createTransformer({ 
     format: 'esm', 
     sourcemap: true,
-    ...(options || {})
+    ...options
   })
 
-  const config = { ...defaults, cwd: path.resolve() } as any
-  const output = Transformer.process(content, sourcePath, config) as { code: string, map: string }
+  const output = Transformer.process(content, sourcePath, opts) as { code: string, map: string }
 
   return { ...output }
 }

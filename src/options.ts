@@ -1,12 +1,10 @@
-import { Loader } from 'esbuild'
+import { Format, Loader } from 'esbuild'
 
 export interface Options {
   jsxFactory?: string
   jsxFragment?: string
   sourcemap?: boolean | 'inline' | 'external'
-  loaders?: {
-    [ext: string]: Loader
-  },
+  loaders?: Record<string, Loader>
   target?: string
-  format?: string
+  format?: Format
 }

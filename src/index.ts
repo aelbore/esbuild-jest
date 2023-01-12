@@ -1,56 +1,45 @@
-import { extname } from 'path'
-
-import { Config } from '@jest/types'
-import { TransformOptions as JestTransformOptions, Transformer } from '@jest/transform'
-import { Format, Loader, TransformOptions, transformSync } from 'esbuild'
+import type { SyncTransformer, TransformerCreator } from '@jest/transform'
+import type { TransformOptions } from 'esbuild'
+import { transformSync } from 'esbuild'
 
 import { Options } from './options'
-import { getExt, loaders } from './utils'
+import { parseLoader } from './utils'
 
-const createTransformer = (options?: Options) => ({
-  process(content: string, 
-    filename: string, 
-    config: Config.ProjectConfig, 
-    opts?: JestTransformOptions
-  ) {
-    const sources = { code: content }
-    const ext = getExt(filename), extName = extname(filename).slice(1)
-
-    const enableSourcemaps = options?.sourcemap || false
-    const loader = (options?.loaders && options?.loaders[ext] 
-      ? options.loaders[ext]
-      : loaders.includes(extName) ? extName: 'text'
-    ) as Loader
-    const sourcemaps: Partial<TransformOptions> = enableSourcemaps 
-      ? { sourcemap: true, sourcesContent: false, sourcefile: filename } 
-      : {}
+const createTransformer: TransformerCreator<SyncTransformer<Options>, Options> = transformerConfig => ({
+  canInstrument: true,
+  process(sourceText, sourcePath, options) {
+    let sourceCode = sourceText
 
     /// this logic or code from 
     /// https://github.com/threepointone/esjest-transform/blob/main/src/index.js
     /// this will support the jest.mock
     /// https://github.com/aelbore/esbuild-jest/issues/12
     /// TODO: transform the jest.mock to a function using babel traverse/parse then hoist it
-    if (sources.code.indexOf("ock(") >= 0 || opts?.instrument) {
-      const source = require('./transformer').babelTransform({
-        sourceText: content,
-        sourcePath: filename,
-        config,
-        options: opts
-      })
-      sources.code = source
+    if (sourceCode.indexOf("ock(") >= 0 || options?.instrument) {
+      const { code } = require('./transformer').babelTransform(sourceText, sourcePath, options)
+      sourceCode = code
     }
 
-    const result = transformSync(sources.code, {
-      loader,
-      format: options?.format as Format || 'cjs',
-      target: options?.target || 'es2018',
-      ...(options?.jsxFactory ? { jsxFactory: options.jsxFactory }: {}),
-      ...(options?.jsxFragment ? { jsxFragment: options.jsxFragment }: {}),
-      ...sourcemaps
-    })
-  
+    const buildConfig: TransformOptions = {
+      loader: parseLoader(sourcePath, transformerConfig.loaders),
+      format: transformerConfig?.format || 'cjs',
+      target: transformerConfig?.target || 'es2018',
+    }
+
+    const isSourcemaps = !!transformerConfig?.sourcemap;
+    if (isSourcemaps) {
+      buildConfig.sourcemap = true
+      buildConfig.sourcesContent = false
+      buildConfig.sourcefile = sourcePath
+    }
+
+    if (transformerConfig?.jsxFactory) buildConfig.jsxFactory = transformerConfig.jsxFactory
+    if (transformerConfig?.jsxFragment) buildConfig.jsxFragment = transformerConfig.jsxFragment
+    
+    const result = transformSync(sourceCode, buildConfig)
+
     let { map, code } = result;
-    if (enableSourcemaps) {
+    if (isSourcemaps) {
       map = {
         ...JSON.parse(result.map),
         sourcesContent: null,
@@ -65,13 +54,10 @@ const createTransformer = (options?: Options) => ({
   
     return { code, map }
   }
-})
-
-const transformer: Pick<Transformer, 'canInstrument' | 'createTransformer'> = {
-  canInstrument: true,
-  createTransformer
-}
+});
 
 export * from './options'
 
-export default transformer
+export default {
+  createTransformer
+}

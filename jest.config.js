@@ -10,8 +10,12 @@ module.exports = {
       }
     ]
   },
+  testEnvironment: 'jest-environment-jsdom',
   /// This will resolve any tsconfig.compilerOptions.paths
   moduleNameMapper: hq.get('jest'),
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/types/' ],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  snapshotFormat: { 
+    escapeString: true, // Note: disabling this value leads to failed snapshots!
+  },
 }

@@ -1,8 +1,8 @@
+import type { Loader } from 'esbuild'
+import type { Options } from './options'
 import path from 'path' 
 
-export const loaders = ["js", "jsx", "ts", "tsx", "json"]
-
-export const getExt = (str: string) => {
+const getExt = (str: string) => {
   const basename = path.basename(str);
   const firstDot = basename.indexOf('.');
   const lastDot = basename.lastIndexOf('.');
@@ -11,4 +11,15 @@ export const getExt = (str: string) => {
   if (firstDot === lastDot) return extname
 
   return basename.slice(firstDot, lastDot) + extname
+}
+
+const loaders = ["js", "jsx", "ts", "tsx", "json"]
+const checkLoader = (extName: string = ''): extName is Loader => loaders.includes(extName)
+
+export const parseLoader = (sourcePath: string, loaders: Options['loaders'] = {}): Loader => {
+  const ext = getExt(sourcePath)
+  const loader = loaders[ext]
+  if (loader) return loader
+  const extName = path.extname(sourcePath).slice(1)
+  return checkLoader(extName) ? extName : 'text'
 }
