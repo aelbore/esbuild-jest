@@ -31,7 +31,7 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.13.0",
     "@swc/core": "^1.2.50",
-    "@types/jest": "^26.0.21",
+    "@types/jest": "^29.2.5",
     "@types/mock-fs": "^4.13.0",
     "@types/node": "^14.14.35",
     "@types/react": "^17.0.3",
@@ -40,8 +40,9 @@
     "aria-build": "^0.7.3",
     "aria-fs": "^0.7.3",
     "esbuild": "^0.8.49",
-    "jest": "^26.6.3",
-    "jest-config": "^26.6.3",
+    "jest": "^29.3.1",
+    "jest-config": "^29.3.1",
+    "jest-environment-jsdom": "^29.3.1",
     "prettier": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -51,7 +52,7 @@
   "dependencies": {
     "@babel/core": "^7.13.10",
     "@babel/plugin-transform-modules-commonjs": "^7.13.8",
-    "babel-jest": "^26.6.3"
+    "babel-jest": "^29.3.1"
   },
   "babel": {
     "presets": [
