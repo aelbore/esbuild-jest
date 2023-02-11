@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, expect, it } from "@jest/globals"
-import * as React from "react"
 import { render } from "react-dom"
 
 import App from '../examples/react-jsx/App'

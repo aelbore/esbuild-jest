@@ -2,7 +2,7 @@ import { extname } from 'path'
 
 import { Config } from '@jest/types'
 import { TransformOptions as JestTransformOptions, Transformer } from '@jest/transform'
-import { Format, Loader, TransformOptions, transformSync } from 'esbuild'
+import { Loader, TransformOptions, transformSync } from 'esbuild'
 
 import { Options } from './options'
 import { getExt, loaders } from './utils'
@@ -42,11 +42,13 @@ const createTransformer = (options?: Options) => ({
 
     const result = transformSync(sources.code, {
       loader,
-      format: options?.format as Format || 'cjs',
+      format: options?.format || 'cjs',
       target: options?.target || 'es2018',
+      jsx: options?.jsx,
       ...(options?.jsxFactory ? { jsxFactory: options.jsxFactory }: {}),
       ...(options?.jsxFragment ? { jsxFragment: options.jsxFragment }: {}),
-      ...sourcemaps
+      ...sourcemaps,
+      
     })
   
     let { map, code } = result;
@@ -58,7 +60,7 @@ const createTransformer = (options?: Options) => ({
   
       // Append the inline sourcemap manually to ensure the "sourcesContent"
       // is null. Otherwise, breakpoints won't pause within the actual source.
-      code = code + '\n//# sourceMappingURL=data:application/json;base64,' + Buffer.from(JSON.stringify(map)).toString('base64')
+      code = code + `\n//# sourceMappingURL=data:application/json;base64,${Buffer.from(JSON.stringify(map)).toString('base64')}`
     } else {
       map = null
     }

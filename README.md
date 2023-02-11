@@ -35,6 +35,7 @@ export interface Options {
   },
   target?: string
   format?: string
+  jsx?: 'transform' | 'preserve' | 'automatic'
 }
 ```
 
@@ -48,7 +49,7 @@ export interface Options {
         loaders: {
           '.spec.ts': 'tsx'
         }
-      } 
+      }
     ]
   }
 }
