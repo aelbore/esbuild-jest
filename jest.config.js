@@ -1,12 +1,14 @@
 const hq = require('alias-hq')
 
 module.exports = {
+  testEnvironment: 'jsdom',
   transform: {
     "\\.[jt]sx?$":  [ 'esbuild-jest', { 
         loaders: {
           '.spec.js': 'jsx',
           '.js': 'jsx'
-        }
+        },
+        jsx: 'automatic'
       }
     ]
   },
