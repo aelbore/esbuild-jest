@@ -30,6 +30,30 @@ test('ts file', () => {
   expect(names.includes('Jane')).toBeTruthy()
 })
 
+test('should strip imported types before transforming jest.mock', () => {
+  const source = `
+    import { Thing } from './thing'
+    export const result: Thing = { value: 1 }
+    jest.mock('./thing')
+  `
+  // Avoid loading this repository's Babel preset, which would hide the regression.
+  const filename = path.resolve('node_modules/consumer/input.ts')
+  const config = { ...defaults, cwd: path.resolve() } as any
+  const output = transformer.createTransformer().process(source, filename, config) as { code: string }
+  const transformedExports = {} as { result?: { value: number } }
+  const mock = jest.fn(() => {
+    expect(transformedExports.result).toBeUndefined()
+  })
+
+  new Function('require', 'exports', output.code)((name: string) => {
+    expect(name).toBe('@jest/globals')
+    return { jest: { mock } }
+  }, transformedExports)
+
+  expect(mock).toHaveBeenCalledWith('./thing')
+  expect(transformedExports.result).toEqual({ value: 1 })
+})
+
 test('should have sourcemap with [jest.mock]', () => {
   const output = process('./examples/names-ts/index.spec.ts')
 
@@ -55,13 +79,13 @@ test('should have sourcemap with [jest.mock]', () => {
       (0, _globals.expect)((0, _index.display)()).toEqual([\\"Joe\\"]);
     });
     
-    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LnNwZWMudHMiXSwibWFwcGluZ3MiOiI7QUFRQSxjQUFLLEtBQUssV0FBVyxNQUFNO0FBQ3pCLFNBQU87SUFDTCxVQUFVO0FBQ1IsYUFBTyxDQUFFOzs7O0FBWGYsSUFBQSxXQUFBLFFBQUE7QUFFQSxJQUFBLFNBQUEsUUFBQTs7Ozs7Ozs7QUFFQSxLQUFLLGlDQUFpQyxNQUFNO0FBQzFDLEVBQUEsSUFBQSxTQUFBLFFBQU8sSUFBQSxPQUFBLFlBQVcsUUFBUSxDQUFFOzsiLCJuYW1lcyI6W10sInNvdXJjZXNDb250ZW50IjpudWxsfQ=="
+    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LnNwZWMudHMiXSwibWFwcGluZ3MiOiI7QUFRQSxjQUFLLEtBQUssV0FBVztBQUNuQixTQUFPO0lBQ0w7QUFDRSxhQUFPLENBQUU7Ozs7QUFYZixJQUFBLFdBQUEsUUFBQTtBQUVBLElBQUEsU0FBQSxRQUFBOzs7Ozs7OztBQUVBLEtBQUssaUNBQWlDO0FBQ3BDLEVBQUEsSUFBQSxTQUFBLFFBQU8sSUFBQSxPQUFBLFlBQVcsUUFBUSxDQUFFOzsiLCJuYW1lcyI6W10sInNvdXJjZXNDb250ZW50IjpudWxsfQ=="
   `)
   
    expect(output.map).toEqual(      {
     version: 3,
     sources: [ 'index.spec.ts' ],
-    mappings: ';AAQA,cAAK,KAAK,WAAW,MAAM;AACzB,SAAO;IACL,UAAU;AACR,aAAO,CAAE;;;;AAXf,IAAA,WAAA,QAAA;AAEA,IAAA,SAAA,QAAA;;;;;;;;AAEA,KAAK,iCAAiC,MAAM;AAC1C,EAAA,IAAA,SAAA,QAAO,IAAA,OAAA,YAAW,QAAQ,CAAE;;',
+    mappings: ';AAQA,cAAK,KAAK,WAAW;AACnB,SAAO;IACL;AACE,aAAO,CAAE;;;;AAXf,IAAA,WAAA,QAAA;AAEA,IAAA,SAAA,QAAA;;;;;;;;AAEA,KAAK,iCAAiC;AACpC,EAAA,IAAA,SAAA,QAAO,IAAA,OAAA,YAAW,QAAQ,CAAE;;',
     names: [],
     sourcesContent: null
   })
@@ -79,13 +103,13 @@ test('should have sourcemap without [jest.mock]', () => {
       display
     };
 
-    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vZXhhbXBsZXMvbmFtZXMtdHMvaW5kZXgudHMiXSwibWFwcGluZ3MiOiJBQUFBO0FBRU8sbUJBQW1CO0FBQ3hCLFNBQU87QUFBQTsiLCJuYW1lcyI6W10sInNvdXJjZXNDb250ZW50IjpudWxsfQ=="
+    //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4vZXhhbXBsZXMvbmFtZXMtdHMvaW5kZXgudHMiXSwibWFwcGluZ3MiOiJBQUFBO0FBRU87QUFDTCxTQUFPO0FBQUE7IiwibmFtZXMiOltdLCJzb3VyY2VzQ29udGVudCI6bnVsbH0="
   `)
 
   expect(output.map).toEqual({
     version: 3,
     sources: [ './examples/names-ts/index.ts' ],
-    mappings: 'AAAA;AAEO,mBAAmB;AACxB,SAAO;AAAA;',
+    mappings: 'AAAA;AAEO;AACL,SAAO;AAAA;',
     names: [],
     sourcesContent: null
   })
